@@ -1,4 +1,4 @@
-package com.prilepskiy_ae.userservice.service;
+package com.prilepskiy_ae.userservice.service.user;
 
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
 import com.prilepskiy_ae.userservice.dto.user.UserResponse;
