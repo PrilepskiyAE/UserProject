@@ -2,7 +2,7 @@ package com.prilepskiy_ae.userservice.controller;
 
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
 import com.prilepskiy_ae.userservice.dto.user.UserResponse;
-import com.prilepskiy_ae.userservice.service.UserService;
+import com.prilepskiy_ae.userservice.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

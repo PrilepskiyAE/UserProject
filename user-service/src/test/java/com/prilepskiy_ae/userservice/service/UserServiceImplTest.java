@@ -7,6 +7,7 @@ import com.prilepskiy_ae.userservice.entity.UserEntity;
 import com.prilepskiy_ae.userservice.exception.UserAlreadyExistsException;
 import com.prilepskiy_ae.userservice.exception.UserNotFoundException;
 import com.prilepskiy_ae.userservice.repository.UserRepository;
+import com.prilepskiy_ae.userservice.service.user.UserServiceImpl;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

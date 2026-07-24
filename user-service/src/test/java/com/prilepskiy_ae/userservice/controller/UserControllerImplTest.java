@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.prilepskiy_ae.userservice.BaseTest;
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
 import com.prilepskiy_ae.userservice.dto.user.UserResponse;
-import com.prilepskiy_ae.userservice.service.UserService;
+import com.prilepskiy_ae.userservice.service.user.UserService;
 import io.qameta.allure.*;
 import io.qameta.allure.junit5.AllureJunit5;
 import org.junit.jupiter.api.DisplayName;

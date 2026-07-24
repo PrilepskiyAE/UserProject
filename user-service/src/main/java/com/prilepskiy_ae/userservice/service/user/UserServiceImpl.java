@@ -1,11 +1,13 @@
-package com.prilepskiy_ae.userservice.service;
+package com.prilepskiy_ae.userservice.service.user;
 
+import com.prilepskiy_ae.userservice.dto.event.OperationType;
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
 import com.prilepskiy_ae.userservice.dto.user.UserResponse;
 import com.prilepskiy_ae.userservice.entity.UserEntity;
 import com.prilepskiy_ae.userservice.exception.UserAlreadyExistsException;
 import com.prilepskiy_ae.userservice.exception.UserNotFoundException;
 import com.prilepskiy_ae.userservice.repository.UserRepository;
+import com.prilepskiy_ae.userservice.service.userEvent.UserEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
+    private final UserEventProducer producer;
 
     @Override
     @Transactional
@@ -38,7 +41,7 @@ public class UserServiceImpl implements UserService {
         UserEntity savedEntity = userRepository.save(entity);
 
         logger.info("User successfully created with id: {}", savedEntity.getId());
-
+        producer.sendUserEvent(user.getEmail(), OperationType.CREATED);
         return savedEntity.toResponse();
     }
 
@@ -114,6 +117,7 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(entity);
 
         logger.info("User successfully deleted with id: {}", id);
+        producer.sendUserEvent(entity.getEmail(), OperationType.DELETED);
     }
 
     @Override
