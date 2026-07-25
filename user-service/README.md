@@ -7,7 +7,7 @@
 
 ## Стек технологий
 
-- Java 17+
+- Java 21
 - Spring Boot
 - Spring Web
 - Spring Data JPA
