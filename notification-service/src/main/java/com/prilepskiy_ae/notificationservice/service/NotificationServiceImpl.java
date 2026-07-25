@@ -1,6 +1,6 @@
 package com.prilepskiy_ae.notificationservice.service;
 
-import com.prilepskiy_ae.notificationservice.dto.event.OperationType;
+import com.prilepskiy_ae.common.OperationType;
 import com.prilepskiy_ae.notificationservice.dto.mail.MailProperties;
 import com.prilepskiy_ae.notificationservice.exception.NotificationException;
 import jakarta.mail.MessagingException;

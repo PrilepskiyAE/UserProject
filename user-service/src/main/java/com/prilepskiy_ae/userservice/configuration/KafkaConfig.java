@@ -1,6 +1,6 @@
 package com.prilepskiy_ae.userservice.configuration;
 
-import com.prilepskiy_ae.userservice.dto.event.UserEventDto;
+import com.prilepskiy_ae.common.UserEventDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

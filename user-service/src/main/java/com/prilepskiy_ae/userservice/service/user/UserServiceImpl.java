@@ -1,6 +1,6 @@
 package com.prilepskiy_ae.userservice.service.user;
 
-import com.prilepskiy_ae.userservice.dto.event.OperationType;
+import com.prilepskiy_ae.common.OperationType;
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
 import com.prilepskiy_ae.userservice.dto.user.UserResponse;
 import com.prilepskiy_ae.userservice.entity.UserEntity;

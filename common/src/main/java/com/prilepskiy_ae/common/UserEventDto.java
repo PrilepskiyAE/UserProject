@@ -1,8 +1,8 @@
-package com.prilepskiy_ae.userservice.dto.event;
+package com.prilepskiy_ae.common;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor

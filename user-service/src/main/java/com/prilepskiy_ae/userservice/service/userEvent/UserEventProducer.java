@@ -1,7 +1,7 @@
 package com.prilepskiy_ae.userservice.service.userEvent;
 
-import com.prilepskiy_ae.userservice.dto.event.OperationType;
-import com.prilepskiy_ae.userservice.dto.event.UserEventDto;
+import com.prilepskiy_ae.common.OperationType;
+import com.prilepskiy_ae.common.UserEventDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

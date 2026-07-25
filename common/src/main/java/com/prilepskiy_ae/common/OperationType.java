@@ -1,4 +1,4 @@
-package com.prilepskiy_ae.userservice.dto.event;
+package com.prilepskiy_ae.common;
 
 public enum OperationType {
     CREATED, DELETED
