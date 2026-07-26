@@ -32,6 +32,8 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.testcontainers.utility.DockerImageName;
+
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +54,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserEventProducerIntegrationTest extends BaseTest {
 
     @Container
-    private static final KafkaContainer kafkaContainer = new KafkaContainer("7.5.0");
+    static KafkaContainer kafkaContainer = new KafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
+
 
     @Autowired
     private WebApplicationContext context;
