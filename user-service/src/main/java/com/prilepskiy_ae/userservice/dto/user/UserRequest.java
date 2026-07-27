@@ -30,7 +30,7 @@ public class UserRequest {
 
     @Schema(
             description = "Email пользователя",
-            example = "alex@example.com"
+            example = "alex@aston.com"
     )
     @ValidEmail
     private String email;

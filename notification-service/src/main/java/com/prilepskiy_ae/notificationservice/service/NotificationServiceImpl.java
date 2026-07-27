@@ -1,6 +1,7 @@
 package com.prilepskiy_ae.notificationservice.service;
 
 import com.prilepskiy_ae.common.OperationType;
+import com.prilepskiy_ae.notificationservice.dto.mail.EmailRequest;
 import com.prilepskiy_ae.notificationservice.dto.mail.MailProperties;
 import com.prilepskiy_ae.notificationservice.exception.NotificationException;
 import jakarta.mail.MessagingException;
@@ -42,6 +43,21 @@ public class NotificationServiceImpl implements NotificationService {
             helper.setText(body, false);
         } catch (MessagingException e) {
             throw new NotificationException("Failed to send email to " + email, e);
+        }
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendEmail(EmailRequest emailRequest) {
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
+            helper.setTo(emailRequest.getEmail());
+            helper.setFrom(mailProperties.getFromAddress());
+            helper.setSubject(emailRequest.getSubject());
+            helper.setText(emailRequest.getMessage(), false);
+        } catch (MessagingException e) {
+            throw new NotificationException("Failed to send email to " + emailRequest.getEmail(), e);
         }
         mailSender.send(message);
     }
