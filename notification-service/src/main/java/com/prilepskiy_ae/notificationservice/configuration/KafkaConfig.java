@@ -3,6 +3,7 @@ package com.prilepskiy_ae.notificationservice.configuration;
 
 import com.prilepskiy_ae.common.UserEventDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -18,13 +19,13 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public ConsumerFactory<String, UserEventDto> userEventConsumerFactory() {
+    public ConsumerFactory<String, UserEventDto> userEventConsumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JacksonJsonDeserializer.class);
         props.put(JacksonJsonDeserializer.VALUE_DEFAULT_TYPE, UserEventDto.class.getName());
-        props.put(JacksonJsonDeserializer.TRUSTED_PACKAGES, "com.prilepskiy_ae.notificationservice.dto.event");
+
 
         return new DefaultKafkaConsumerFactory<>(props);
     }
