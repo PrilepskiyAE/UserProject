@@ -8,6 +8,7 @@ import com.prilepskiy_ae.userservice.exception.UserAlreadyExistsException;
 import com.prilepskiy_ae.userservice.exception.UserNotFoundException;
 import com.prilepskiy_ae.userservice.repository.UserRepository;
 import com.prilepskiy_ae.userservice.service.user.UserServiceImpl;
+import com.prilepskiy_ae.userservice.service.userEvent.UserEventProducer;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -35,6 +36,9 @@ public class UserServiceImplTest extends BaseTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    @Mock
+    private UserEventProducer producer;
 
     @Test
     @Story("Create user")
