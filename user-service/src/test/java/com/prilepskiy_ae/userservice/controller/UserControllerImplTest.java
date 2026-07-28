@@ -51,7 +51,7 @@ public class UserControllerImplTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("POST /api/users должен создать пользователя и вернуть 201 Created")
     @Description("Проверяем, что контроллер принимает UserRequest, вызывает UserService и возвращает UserResponse со статусом 201.")
-    void test1() throws Exception {
+    void testCreateUserReturns201Created() throws Exception {
         UserRequest request = createUserRequest(USER_NAME, USER_EMAIL, USER_AGE);
         UserResponse response = new UserResponse(USER_ID, USER_NAME, USER_EMAIL, USER_AGE, CREATED_AT);
 
@@ -78,7 +78,7 @@ public class UserControllerImplTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("GET /api/users/{id} должен вернуть пользователя по id")
     @Description("Проверяем успешное получение пользователя по идентификатору.")
-    void test2() throws Exception {
+    void testGetUserByIdReturnsUser() throws Exception {
         UserResponse response = new UserResponse(
                 USER_ID,
                 USER_NAME,
@@ -107,7 +107,7 @@ public class UserControllerImplTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("GET /api/users должен вернуть список пользователей")
     @Description("Проверяем успешное получение списка пользователей.")
-    void test3() throws Exception {
+    void testGetUsersReturnsList() throws Exception {
         List<UserResponse> response = List.of(
                 new UserResponse(
                         USER_ID,
@@ -150,7 +150,7 @@ public class UserControllerImplTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("PUT /api/users/{id} должен обновить пользователя")
     @Description("Проверяем, что контроллер принимает UserRequest, вызывает обновление в UserService и возвращает обновленного пользователя.")
-    void test4() throws Exception {
+    void testUpdate() throws Exception {
         UserRequest request = createUserRequest(
                 UPDATED_USER_NAME,
                 NEW_EMAIL,
@@ -187,7 +187,7 @@ public class UserControllerImplTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("DELETE /api/users/{id} должен удалить пользователя и вернуть 204 No Content")
     @Description("Проверяем успешное удаление пользователя по идентификатору.")
-    void test5() throws Exception {
+    void testDelete() throws Exception {
         doNothing()
                 .when(userService)
                 .deleteUserById(USER_ID);

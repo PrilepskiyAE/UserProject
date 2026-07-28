@@ -50,7 +50,7 @@ public class UserServiceImplTest extends BaseTest {
             и вернуть UserResponse с корректными id, name, email и age.
             """)
     @Tag("create")
-    void test1() {
+    void testCreateUser() {
         UserRequest request = createUserRequest(USER_NAME, USER_EMAIL, USER_AGE);
         UserEntity savedEntity = createUserEntity(USER_ID, USER_NAME, USER_EMAIL, USER_AGE);
 
@@ -75,7 +75,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("get-by-id")
     @Tag("positive")
-    void test2() {
+    void testGetUserByIdPositive() {
         UserEntity entity = createUserEntity(USER_ID, USER_NAME, USER_EMAIL, USER_AGE);
 
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
@@ -99,7 +99,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("get-by-id")
     @Tag("negative")
-    void test3() {
+    void testGetUserByIdNegative() {
         when(userRepository.findById(NOT_FOUND_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(
@@ -122,7 +122,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("get-all")
     @Tag("positive")
-    void test4() {
+    void testGetAllUserPositive() {
         UserEntity firstUser = createUserEntity(USER_ID, USER_NAME, USER_EMAIL, USER_AGE);
         UserEntity secondUser = createUserEntity(
                 SECOND_USER_ID,
@@ -156,7 +156,7 @@ public class UserServiceImplTest extends BaseTest {
     @Tag("get-all")
     @Tag("empty")
     @Tag("positive")
-    void test5() {
+    void testGetAllUserEmpty() {
         when(userRepository.findAll()).thenReturn(List.of());
 
         List<UserResponse> result = userService.getAllUsers();
@@ -178,7 +178,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("update")
     @Tag("positive")
-    void test6() {
+    void testUpdateUserPositive() {
         UserEntity existingEntity = createUserEntity(USER_ID, OLD_USER_NAME, USER_EMAIL, OLD_AGE);
         UserRequest request = createUserRequest(UPDATED_USER_NAME, USER_EMAIL, USER_AGE);
         UserEntity updatedEntity = createUserEntity(USER_ID, UPDATED_USER_NAME, USER_EMAIL, USER_AGE);
@@ -208,7 +208,7 @@ public class UserServiceImplTest extends BaseTest {
     @Tag("update")
     @Tag("email")
     @Tag("positive")
-    void test7() {
+    void testUpdateUserEmailPositive() {
         UserEntity existingEntity = createUserEntity(USER_ID, OLD_USER_NAME, OLD_EMAIL, OLD_AGE);
         UserRequest request = createUserRequest(UPDATED_USER_NAME, NEW_EMAIL, USER_AGE);
         UserEntity updatedEntity = createUserEntity(USER_ID, UPDATED_USER_NAME, NEW_EMAIL, USER_AGE);
@@ -239,7 +239,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("update")
     @Tag("negative")
-    void test8() {
+    void testUpdateUserNegative() {
         UserRequest request = createUserRequest(USER_NAME, USER_EMAIL, USER_AGE);
 
         when(userRepository.findById(NOT_FOUND_USER_ID)).thenReturn(Optional.empty());
@@ -267,7 +267,7 @@ public class UserServiceImplTest extends BaseTest {
     @Tag("update")
     @Tag("email")
     @Tag("negative")
-    void test9() {
+    void testUpdateUserEmailNegative() {
         UserEntity existingEntity = createUserEntity(USER_ID, OLD_USER_NAME, OLD_EMAIL, OLD_AGE);
         UserRequest request = createUserRequest(UPDATED_USER_NAME, BUSY_EMAIL, USER_AGE);
 
@@ -296,7 +296,7 @@ public class UserServiceImplTest extends BaseTest {
     @Tag("update")
     @Tag("trim")
     @Tag("positive")
-    void test10() {
+    void testUpdateUserNormPositive() {
         UserEntity existingEntity = createUserEntity(USER_ID, OLD_USER_NAME, OLD_EMAIL, OLD_AGE);
 
         UserRequest request = createUserRequest(
@@ -332,7 +332,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("delete")
     @Tag("positive")
-    void test11() {
+    void testDeletePositive() {
         UserEntity entity = createUserEntity(USER_ID, USER_NAME, USER_EMAIL, USER_AGE);
 
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
@@ -355,7 +355,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("delete")
     @Tag("negative")
-    void test12() {
+    void testDeleteNegative() {
         when(userRepository.findById(NOT_FOUND_USER_ID)).thenReturn(Optional.empty());
 
         assertThrows(
@@ -378,7 +378,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("email")
     @Tag("positive")
-    void test13() {
+    void checkEmailPositive() {
         when(userRepository.existsByEmail(USER_EMAIL)).thenReturn(true);
 
         boolean result = userService.isEmailExists(USER_EMAIL);
@@ -399,7 +399,7 @@ public class UserServiceImplTest extends BaseTest {
             """)
     @Tag("email")
     @Tag("negative")
-    void test14() {
+    void checkEmailNegative() {
         when(userRepository.existsByEmail(FREE_EMAIL)).thenReturn(false);
 
         boolean result = userService.isEmailExists(FREE_EMAIL);

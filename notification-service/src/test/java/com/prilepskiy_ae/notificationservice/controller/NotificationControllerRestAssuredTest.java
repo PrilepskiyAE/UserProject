@@ -50,7 +50,7 @@ public class NotificationControllerRestAssuredTest {
     @Story("Валидация входных данных")
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("POST /sendEmail с некорректными данными должен вернуть 400 Bad Request")
-    void test1() {
+    void sendEmailNegative() {
         EmailRequest invalidRequest = new EmailRequest("", "Тема", "Тело");
 
         given()
@@ -73,7 +73,7 @@ public class NotificationControllerRestAssuredTest {
     @Test
     @DisplayName("POST /sendEmail должен вернуть 200 (реальный сценарий)")
     @Disabled
-    void test2() throws Exception {
+    void sendEmailPositive() throws Exception {
 
         given()
                 .contentType(JSON)

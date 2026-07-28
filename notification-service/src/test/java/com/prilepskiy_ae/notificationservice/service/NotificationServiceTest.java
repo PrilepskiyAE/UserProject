@@ -25,7 +25,7 @@ public class NotificationServiceTest {
     @Test
     @DisplayName("Валидный EmailRequest должен проходить валидацию")
     @Description("Убеждаемся, что корректный запрос не вызывает ошибок")
-    void test() {
+    void testValidate() {
         var request = new EmailRequest("alex@aston.com", "Тема письма", "Текст сообщения");
         var violations = validator.validate(request);
 

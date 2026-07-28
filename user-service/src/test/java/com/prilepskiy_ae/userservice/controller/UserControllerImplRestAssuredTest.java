@@ -49,7 +49,7 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("POST /api/users должен создать пользователя и вернуть 201 Created(Проверка средствами REST  Assured) ")
     @Description("Проверяем, что контроллер принимает UserRequest, вызывает UserService и возвращает UserResponse со статусом 201.")
-    void test1() {
+    void testCreateUserReturns201Created() {
         UserRequest request = createUserRequest(USER_NAME, USER_EMAIL, USER_AGE);
         UserResponse response = new UserResponse(
                 USER_ID,
@@ -86,7 +86,7 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
     @DisplayName("GET /api/users/{id} должен вернуть пользователя по id (Проверка средствами REST  Assured)")
     @Description("Проверяем успешное получение пользователя по идентификатору.")
     @Test
-    void test2(){
+    void testGetUserByIdReturnsUser(){
         UserResponse response = new UserResponse(
                 USER_ID,
                 USER_NAME,
@@ -118,7 +118,7 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("GET /api/users должен вернуть список пользователей (Проверка средствами REST  Assured)")
     @Description("Проверяем успешное получение списка пользователей.")
-    void test3(){
+    void testGetUsersReturnsList(){
         List<UserResponse> response = List.of(
                 new UserResponse(
                         USER_ID,
@@ -164,7 +164,7 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("PUT /api/users/{id} должен обновить пользователя (Проверка средствами REST  Assured)")
     @Description("Проверяем, что контроллер принимает UserRequest, вызывает обновление в UserService и возвращает обновленного пользователя.")
-    void test4(){
+    void testUpdate(){
         UserRequest request = createUserRequest(
                 UPDATED_USER_NAME,
                 NEW_EMAIL,
@@ -203,7 +203,7 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
     @Severity(CRITICAL)
     @DisplayName("DELETE /api/users/{id} должен удалить пользователя и вернуть 204 No Content (Проверка средствами REST  Assured)")
     @Description("Проверяем успешное удаление пользователя по идентификатору.")
-    void test5(){
+    void testDelete(){
         doNothing()
                 .when(userService)
                 .deleteUserById(USER_ID);

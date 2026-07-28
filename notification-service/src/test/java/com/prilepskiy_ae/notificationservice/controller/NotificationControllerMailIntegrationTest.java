@@ -66,7 +66,7 @@ class NotificationControllerMailIntegrationTest {
     @DisplayName("Тест для проверки отправки сообщения на почту")
     @Description("Проверка успешной отправки обычного текстового письма на локальный SMTP (GreenMail). " +
             "Тест должен убедиться, что письмо попадает в ящик, тема и тело совпадают.")
-    void test() throws Exception {
+    void testSendMail() throws Exception {
 
         EmailRequest request = new EmailRequest(
                 "recipient@example.com",
