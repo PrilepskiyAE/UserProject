@@ -91,7 +91,7 @@ public class UserEventProducerIntegrationTest extends BaseTest {
     @Story("Создание пользователя")
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("POST /api/users должен создать пользователя, вернуть 201 и отправить событие в Kafka")
-    void test1() throws Exception {
+    void testCreateUserAndSendKafka() throws Exception {
         UserRequest userRequest = new UserRequest(UPDATED_USER_NAME, uniqueEmail, USER_AGE);
         String payload = objectMapper.writeValueAsString(userRequest);
 
@@ -158,7 +158,7 @@ public class UserEventProducerIntegrationTest extends BaseTest {
     @Story("Kafka")
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("kafkaTemplate должен успешно отправить UserEventDto в топик")
-    void test2() throws Exception {
+    void testSendKafka() throws Exception {
         String testKey = "user-123";
         UserEventDto testEvent = new UserEventDto("test@example.com", OperationType.CREATED);
         CompletableFuture<SendResult<String, UserEventDto>> future = kafkaTemplate.send("user-events", testKey, testEvent);
