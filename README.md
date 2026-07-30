@@ -20,7 +20,7 @@
 | Сборка | Maven |
 | Тестирование | JUnit 5, Mockito, Allure Report |
 | Контейнеризация | Docker, Docker Compose |
-| Прочее | Lombok, Bean Validation |
+| Прочее | Lombok, Bean Validation,HATEOAS |
 
 ---
 
