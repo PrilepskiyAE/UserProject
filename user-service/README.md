@@ -20,7 +20,8 @@
 - Bean Validation
 - REST Assured
 - Allure report
-- Kafka
+- Kafka,
+- HATEOAS
 
 ## Возможности приложения
 
