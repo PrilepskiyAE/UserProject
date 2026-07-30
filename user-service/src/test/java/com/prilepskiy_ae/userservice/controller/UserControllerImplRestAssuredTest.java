@@ -145,15 +145,21 @@ public class UserControllerImplRestAssuredTest extends BaseTest {
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body("", hasSize(2))
-                .body("[0].id", equalTo(USER_ID_INT))
-                .body("[0].name", equalTo(USER_NAME))
-                .body("[0].email", equalTo(USER_EMAIL))
-                .body("[0].age", equalTo(USER_AGE))
-                .body("[1].id", equalTo(SECOND_USER_ID_INT))
-                .body("[1].name", equalTo(SECOND_USER_NAME))
-                .body("[1].email", equalTo(SECOND_USER_EMAIL))
-                .body("[1].age", equalTo(SECOND_USER_AGE));
+                // Проверяем, что есть _embedded
+                .body("_embedded.userResponseList", hasSize(2))
+                // Первый пользователь
+                .body("_embedded.userResponseList[0].id", equalTo(USER_ID_INT))
+                .body("_embedded.userResponseList[0].name", equalTo(USER_NAME))
+                .body("_embedded.userResponseList[0].email", equalTo(USER_EMAIL))
+                .body("_embedded.userResponseList[0].age", equalTo(USER_AGE))
+                // Второй пользователь
+                .body("_embedded.userResponseList[1].id", equalTo(SECOND_USER_ID_INT))
+                .body("_embedded.userResponseList[1].name", equalTo(SECOND_USER_NAME))
+                .body("_embedded.userResponseList[1].email", equalTo(SECOND_USER_EMAIL))
+                .body("_embedded.userResponseList[1].age", equalTo(SECOND_USER_AGE))
+                // Проверяем наличие ссылок у коллекции
+                .body("_links.self.href", notNullValue());
+
 
         verify(userService, times(1)).getAllUsers();
         verifyNoMoreInteractions(userService);

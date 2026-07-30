@@ -61,17 +61,19 @@ public class UserControllerImplTest extends BaseTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")))
                 .andExpect(jsonPath("$.id").value(USER_ID))
                 .andExpect(jsonPath("$.name").value(USER_NAME))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL))
                 .andExpect(jsonPath("$.age").value(USER_AGE))
-                .andExpect(jsonPath("$.createdAt").exists());
+                .andExpect(jsonPath("$.createdAt").value("2026-01-01T12:00:00"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/users/" + USER_ID))
+                .andExpect(jsonPath("$._links.collection.href").value("http://localhost/api/users"))
+                .andExpect(header().string("Location", "http://localhost/api/users/" + USER_ID));
 
         verify(userService, times(1)).createUser(any(UserRequest.class));
         verifyNoMoreInteractions(userService);
     }
-
 
     @Test
     @Story("Получение пользователя")
@@ -87,16 +89,18 @@ public class UserControllerImplTest extends BaseTest {
                 CREATED_AT
         );
 
-        when(userService.getUserById(USER_ID))
-                .thenReturn(response);
+        when(userService.getUserById(USER_ID)).thenReturn(response);
 
         mockMvc.perform(get(BASE_URL + "/{id}", USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")))
                 .andExpect(jsonPath("$.id").value(USER_ID))
                 .andExpect(jsonPath("$.name").value(USER_NAME))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL))
-                .andExpect(jsonPath("$.age").value(USER_AGE));
+                .andExpect(jsonPath("$.age").value(USER_AGE))
+                .andExpect(jsonPath("$.createdAt").value("2026-01-01T12:00:00"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/users/" + USER_ID))
+                .andExpect(jsonPath("$._links.collection.href").value("http://localhost/api/users"));
 
         verify(userService, times(1)).getUserById(USER_ID);
         verifyNoMoreInteractions(userService);
@@ -130,16 +134,21 @@ public class UserControllerImplTest extends BaseTest {
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id").value(USER_ID))
-                .andExpect(jsonPath("$[0].name").value(USER_NAME))
-                .andExpect(jsonPath("$[0].email").value(USER_EMAIL))
-                .andExpect(jsonPath("$[0].age").value(USER_AGE))
-                .andExpect(jsonPath("$[1].id").value(SECOND_USER_ID))
-                .andExpect(jsonPath("$[1].name").value(SECOND_USER_NAME))
-                .andExpect(jsonPath("$[1].email").value(SECOND_USER_EMAIL))
-                .andExpect(jsonPath("$[1].age").value(SECOND_USER_AGE));
+                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")))
+                .andExpect(jsonPath("$._embedded.userResponseList", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.userResponseList[0].id").value(USER_ID))
+                .andExpect(jsonPath("$._embedded.userResponseList[0].name").value(USER_NAME))
+                .andExpect(jsonPath("$._embedded.userResponseList[0].email").value(USER_EMAIL))
+                .andExpect(jsonPath("$._embedded.userResponseList[0].age").value(USER_AGE))
+                .andExpect(jsonPath("$._embedded.userResponseList[0].createdAt").value("2026-01-01T12:00:00"))
+                .andExpect(jsonPath("$._embedded.userResponseList[0]._links.self.href").value("http://localhost/api/users/" + USER_ID))
+                .andExpect(jsonPath("$._embedded.userResponseList[1].id").value(SECOND_USER_ID))
+                .andExpect(jsonPath("$._embedded.userResponseList[1].name").value(SECOND_USER_NAME))
+                .andExpect(jsonPath("$._embedded.userResponseList[1].email").value(SECOND_USER_EMAIL))
+                .andExpect(jsonPath("$._embedded.userResponseList[1].age").value(SECOND_USER_AGE))
+                .andExpect(jsonPath("$._embedded.userResponseList[1].createdAt").value("2026-01-02T12:00:00"))
+                .andExpect(jsonPath("$._embedded.userResponseList[1]._links.self.href").value("http://localhost/api/users/" + SECOND_USER_ID))
+                .andExpect(jsonPath("$._links.self.href").exists());
 
         verify(userService, times(1)).getAllUsers();
         verifyNoMoreInteractions(userService);
@@ -172,11 +181,15 @@ public class UserControllerImplTest extends BaseTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")))
                 .andExpect(jsonPath("$.id").value(USER_ID))
                 .andExpect(jsonPath("$.name").value(UPDATED_USER_NAME))
                 .andExpect(jsonPath("$.email").value(NEW_EMAIL))
-                .andExpect(jsonPath("$.age").value(USER_AGE));
+                .andExpect(jsonPath("$.age").value(USER_AGE))
+                .andExpect(jsonPath("$.createdAt").value("2026-01-01T12:00:00"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/users/" + USER_ID))
+                .andExpect(jsonPath("$._links.collection.href").exists()); // collection может быть, а может и не быть — лучше exists(), чем value()
+
 
         verify(userService, times(1)).updateUser(eq(USER_ID), any(UserRequest.class));
         verifyNoMoreInteractions(userService);

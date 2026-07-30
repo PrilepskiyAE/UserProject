@@ -5,6 +5,7 @@ import com.prilepskiy_ae.userservice.dto.user.UserResponse;
 import com.prilepskiy_ae.userservice.entity.UserEntity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,7 +32,8 @@ public abstract class BaseTest {
     protected final int OLD_AGE = 20;
     protected final int SECOND_USER_AGE = 30;
 
-    protected final LocalDateTime CREATED_AT = LocalDateTime.of(2026, 1, 1, 12, 0);
+
+    protected final LocalDateTime CREATED_AT = LocalDateTime.of(2026, 1, 1, 12, 0, 0);
     protected final LocalDateTime SECOND_CREATED_AT = LocalDateTime.of(2026, 1, 2, 12, 0);
 
     protected final String BASE_URL = "/api/users";
