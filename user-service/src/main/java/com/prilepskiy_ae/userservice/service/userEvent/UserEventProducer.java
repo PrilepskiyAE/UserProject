@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -20,9 +22,14 @@ public class UserEventProducer {
     @Value("${kafka.topic.user-events}")
     private String topic;
 
-    public void sendUserEvent(String email, OperationType operation) {
-        log.info("[Producer] New '{}' event for user '{}' dispatched to topic '{}'", operation, email, topic);
-        var event = new UserEventDto(email, operation);
-        kafkaTemplate.send(topic, event);
+    public CompletableFuture<SendResult<String, UserEventDto>> sendUserEvent(
+            String email,
+            OperationType operation
+    ) {
+        UserEventDto event = new UserEventDto(
+                email,
+                operation
+        );
+        return kafkaTemplate.send(topic, event);
     }
 }

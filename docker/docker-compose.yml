@@ -82,9 +82,7 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
-      # Явное отключение всех видов шифрования
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: PLAINTEXT
-      # Принудительная зачистка полей, которые могут быть undefined
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: ""
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
 
