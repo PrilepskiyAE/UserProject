@@ -1,9 +1,9 @@
 package com.prilepskiy_ae.userservice.dto.user;
 
 import com.prilepskiy_ae.userservice.entity.UserEntity;
-import com.prilepskiy_ae.userservice.util.ValidEmail;
 import com.prilepskiy_ae.userservice.util.ValidName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +32,7 @@ public class UserRequest {
             description = "Email пользователя",
             example = "alex@aston.com"
     )
-    @ValidEmail
+    @Email(message = "Некорректный email")
     private String email;
 
     @Schema(
