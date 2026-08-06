@@ -106,7 +106,7 @@ public class UserController  {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список пользователей успешно получен",
                     content = @Content(schema = @Schema(implementation = CollectionModel.class))),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+            @ApiResponse(responseCode = "500", description = "Произошла внутренняя ошибка сервиса. Попробуйте позже или сообщите оператору Correlation-ID",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
 
