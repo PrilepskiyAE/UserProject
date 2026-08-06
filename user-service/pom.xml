@@ -129,7 +129,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.prilepskiy_ae</groupId>
+            <groupId>com.prilepskiy_ae.common</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
