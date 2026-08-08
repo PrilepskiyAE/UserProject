@@ -15,7 +15,7 @@ public class SwaggerConfig {
         @Bean
         public OpenAPI customOpenAPI() {
                 Server localServer = new Server()
-                        .url("http://localhost:8080")
+                        .url("http://localhost:8081")
                         .description("Local server");
 
                 Contact contact = new Contact()
