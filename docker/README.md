@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 ### Для `userservice` (продюсер событий)
 
-В `application.properties`:
+В `application.temp`:
 ```properties
 spring.kafka.bootstrap-servers=kafka:29092
 spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
@@ -128,7 +128,7 @@ spring.kafka.producer.value-serializer=org.springframework.kafka.support.seriali
 
 ### Для `notification-service` (потребитель событий)
 
-В `application.properties`:
+В `application.temp`:
 ```properties
 spring.kafka.bootstrap-servers=kafka:29092
 spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer

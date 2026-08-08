@@ -1,15 +1,15 @@
-package com.prilepskiy_ae.userservice;
+package com.prilepskiy_ae.gateway_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableDiscoveryClient
 @SpringBootApplication
-public class UserServiceApplication {
+@EnableDiscoveryClient
+public class GatewayServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
+        SpringApplication.run(GatewayServiceApplication.class, args);
     }
 
 }
