@@ -1,12 +1,15 @@
 # User Project
 
-Это мультисервисный проект на Spring Boot для управления пользователями и отправки уведомлений. Состоит из следующих микросервисов:
 
-- **`user-service`** — REST API для CRUD‑операций с пользователями, публикует события в Kafka.
-- **`notification-service`** — потребляет события из Kafka и отправляет email‑уведомления.
-- **`gateway-service`** — API‑шлюз, единая точка входа для внешних запросов.
-- **`eureka-server`** — центральный компонент Service Discovery (регистрация и поиск сервисов).
-- **`config-server`** — централизованный сервис для хранения и раздачи конфигураций микросервисам.
+Мультисервисный проект на Spring Boot для управления пользователями и отправки уведомлений.
+
+Проект состоит из следующих микросервисов:
+
+- **`user-service`** — REST API для CRUD-операций с пользователями, публикует события в Kafka.
+- **`notification-service`** — потребляет события из Kafka и отправляет email-уведомления.
+- **`gateway-service`** — API-шлюз, единая точка входа для внешних запросов.
+- **`eureka-server`** — Service Discovery для регистрации и поиска сервисов.
+- **`config-server`** — централизованный сервис конфигурации микросервисов.
 
 ---
 
@@ -15,19 +18,20 @@
 | Компонент | Технологии |
 |---|---|
 | Язык и рантайм | Java 21 |
-| Фреймворк | Spring Boot 3.2, Spring Cloud 2023.0 |
-| Веб / REST | Spring Web, MockMvc, REST Assured |
+| Фреймворк | Spring Boot, Spring Cloud |
+| Веб / REST | Spring Web, Spring Cloud Gateway Server WebMVC, MockMvc, REST Assured |
 | ORM / БД | Spring Data JPA, Hibernate, PostgreSQL 16 |
-| Брокер сообщений | Apache Kafka (Confluent), Spring Kafka |
-| Почта | Jakarta Mail (SMTP) |
+| Брокер сообщений | Apache Kafka, Spring Kafka |
+| Почта | Jakarta Mail SMTP |
+| Service Discovery | Spring Cloud Netflix Eureka |
+| Config Server | Spring Cloud Config |
 | Сборка | Maven 3.9+ |
 | Тестирование | JUnit 5, Mockito, Allure Report |
-| Контейнеризация | Docker Engine ≥ 20.10, Docker Compose v2 |
-| Прочее | Lombok, Bean Validation, HATEOAS, Spring Cloud Config, Spring Cloud Netflix Eureka |
+| Контейнеризация | Docker Engine ≥ 20.10, Docker Compose v2 |
+| Прочее | Lombok, Bean Validation, HATEOAS, Actuator, Resilience4j |
 
 ---
 
-## 🚀 Возможности
 
 ### `user-service`
 - CRUD пользователей: создание, чтение (по ID и списком), обновление, удаление.
