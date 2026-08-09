@@ -70,6 +70,7 @@
 
 ### Подготовка
 
+
 1. Создайте файл `.env` в корне проекта:
    ```env
    ASTON_POSTGRES_USER=aston_user
@@ -83,6 +84,8 @@
 3. Добавьте `.env` и `target/` в `.gitignore`.
 
 ### Запуск
+
+`eureka-server -> config-server -> gateway-service -> user-service -> notification-service`
 
 ```bash
 docker compose down -v
