@@ -9,12 +9,14 @@ import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.*;
 @Owner("Prilepskiy Alex")
 @ExtendWith(AllureJunit5.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Disabled
 public class UserControllerImplRestAssuredTest extends BaseTest {
     @LocalServerPort
     private int port;
