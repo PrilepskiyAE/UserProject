@@ -118,6 +118,6 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     }
 
     private boolean isNotificationPath(String path) {
-        return path.equals("/api/notifications") || path.startsWith("/api/notifications/");
+        return path.equals("/api/notification") || path.startsWith("/api/notification/");
     }
 }
