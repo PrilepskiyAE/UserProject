@@ -1,0 +1,212 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: aston_postgres
+    environment:
+      POSTGRES_DB: ${ASTON_POSTGRES_DB}
+      POSTGRES_USER: ${ASTON_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ASTON_POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ASTON_POSTGRES_USER} -d ${ASTON_POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: aston_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${ASTON_PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${ASTON_PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: aston_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: aston_kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:29092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: aston_kafka_ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8083:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: PLAINTEXT
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: aston_eureka_server
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  config-server:
+    build: ./config-server
+    container_name: aston_config_server
+    environment:
+      SPRING_APPLICATION_NAME: config-server
+      SPRING_PROFILES_ACTIVE: docker,native
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: ${ASTON_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS:-file:/config/}
+    depends_on:
+      - eureka-server
+    volumes:
+      - ./config-prod:/config:ro
+    ports:
+      - "8888:8888"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: aston_gateway_service
+    environment:
+      SPRING_APPLICATION_NAME: gateway-service
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - config-server
+      - eureka-server
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  user-service:
+    build: ./user-service
+    container_name: aston_user_service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_APPLICATION_NAME: user-service
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+
+      ASTON_POSTGRES_USER: ${ASTON_POSTGRES_USER}
+      ASTON_POSTGRES_PASSWORD: ${ASTON_POSTGRES_PASSWORD}
+
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  notification-service:
+    build: ./notification-service
+    container_name: aston_notification_service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_APPLICATION_NAME: notification-service
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+      MAIL_LOGIN: ${MAIL_LOGIN}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

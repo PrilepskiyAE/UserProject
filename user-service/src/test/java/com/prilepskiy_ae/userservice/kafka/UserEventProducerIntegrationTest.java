@@ -1,6 +1,7 @@
 package com.prilepskiy_ae.userservice.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.prilepskiy_ae.common.OperationType;
 import com.prilepskiy_ae.common.UserEventDto;
 import com.prilepskiy_ae.userservice.BaseTest;
