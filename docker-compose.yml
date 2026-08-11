@@ -113,6 +113,12 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8761/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   config-server:
     build: ./config-server
@@ -123,7 +129,8 @@ services:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: ${ASTON_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS:-file:/config/}
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
     volumes:
       - ./config-prod:/config:ro
     ports:
@@ -131,6 +138,12 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8888/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   gateway-service:
     build: ./gateway-service
@@ -143,11 +156,19 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - config-server
-      - eureka-server
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8080/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   user-service:
     build: ./user-service
@@ -170,12 +191,21 @@ services:
       kafka:
         condition: service_healthy
       config-server:
-        condition: service_started
+        condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
+
+      gateway-service:
+        condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   notification-service:
     build: ./notification-service
@@ -197,12 +227,20 @@ services:
       kafka:
         condition: service_healthy
       config-server:
-        condition: service_started
+        condition: service_healthy
       eureka-server:
-        condition: service_started
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8082/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
 networks:
   app-network:
