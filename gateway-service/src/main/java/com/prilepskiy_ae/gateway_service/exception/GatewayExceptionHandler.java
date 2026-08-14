@@ -2,6 +2,7 @@ package com.prilepskiy_ae.gateway_service.exception;
 
 
 import com.prilepskiy_ae.gateway_service.controller.GatewayFallbackController;
+import com.prilepskiy_ae.gateway_service.utils.Utils;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class GatewayExceptionHandler {
     ) {
         String path = request.getRequestURI();
 
-        if (isUserPath(path)) {
+        if (Utils.isUserPath(path)) {
             recordError(userServiceCircuitBreaker, exception);
             log.error("USER-SERVICE gateway failure. path={}, state={}",
                     path,
@@ -52,7 +53,7 @@ public class GatewayExceptionHandler {
             return fallbackController.userServiceUnavailable();
         }
 
-        if (isNotificationPath(path)) {
+        if (Utils.isNotificationPath(path)) {
             recordError(notificationServiceCircuitBreaker, exception);
             log.error("NOTIFICATION-SERVICE gateway failure. path={}, state={}",
                     path,
@@ -99,11 +100,5 @@ public class GatewayExceptionHandler {
         return false;
     }
 
-    private boolean isUserPath(String path) {
-        return path.equals("/api/users") || path.startsWith("/api/users/");
-    }
 
-    private boolean isNotificationPath(String path) {
-        return path.equals("/api/notification") || path.startsWith("/api/notification/");
-    }
 }

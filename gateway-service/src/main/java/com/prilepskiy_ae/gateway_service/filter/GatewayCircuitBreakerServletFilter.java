@@ -1,6 +1,7 @@
 package com.prilepskiy_ae.gateway_service.filter;
 
 import com.prilepskiy_ae.gateway_service.controller.GatewayFallbackController;
+import com.prilepskiy_ae.gateway_service.utils.Utils;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -74,11 +75,11 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     }
 
     private CircuitBreaker resolveCircuitBreaker(String path) {
-        if (isUserPath(path)) {
+        if (Utils.isUserPath(path)) {
             return userServiceCircuitBreaker;
         }
 
-        if (isNotificationPath(path)) {
+        if (Utils.isNotificationPath(path)) {
             return notificationServiceCircuitBreaker;
         }
 
@@ -91,7 +92,7 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     ) throws IOException {
         ResponseEntity<String> fallback;
 
-        if (isNotificationPath(path)) {
+        if (Utils.isNotificationPath(path)) {
             fallback = fallbackController.notificationServiceUnavailable();
         } else {
             fallback = fallbackController.userServiceUnavailable();
@@ -107,16 +108,11 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
             return true;
         }
         // из требований не понятно ловит нужно все 4xx, по этому ловим все
-        if ((isUserPath(path) || isNotificationPath(path)) && status >= 400 && status < 500) {
+        if ((Utils.isUserPath(path) || Utils.isNotificationPath(path)) && status >= 400 && status < 500) {
             return true;
         }
 
         return false;
     }
-    private boolean isUserPath(String path) {
-        return path.equals("/api/users") || path.startsWith("/api/users/");
-    }
-    private boolean isNotificationPath(String path) {
-        return path.equals("/api/notification") || path.startsWith("/api/notification/");
-    }
+
 }
