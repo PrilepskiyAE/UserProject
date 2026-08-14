@@ -76,7 +76,8 @@
 
 
 1. Создайте файл `.env` в корне проекта:
-   ```env
+
+```env
    
 ASTON_POSTGRES_DB=platform_db
 ASTON_POSTGRES_USER=admin
@@ -86,7 +87,7 @@ ASTON_PGADMIN_DEFAULT_PASSWORD=password
 ASTON_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=file:///config/
 MAIL_LOGIN=example@gmail.com
 MAIL_PASSWORD=app-password-here
-
+```
 2. Убедитесь, что `init.sql` лежит рядом с `docker-compose.yml` (если нужна инициализация БД).
 3. Добавьте `.env` и `target/` в `.gitignore`.
 
@@ -124,8 +125,7 @@ echo "...........................Success..........................."
 
 1. В IntelliJ IDEA создайте Run Configuration для каждого сервиса (`UserServiceApplication`, `NotificationServiceApplication`, `GatewayServiceApplication`).
 2. В поле **Environment variables** укажите переменные из `.env`.
-3. В **VM options** добавьте: `-Dspring.profiles.active=local`.
-4. Запустите сервисы в порядке: `gateway-service`, `user-service`, `notification-service`.
+3. Запустите сервисы в порядке: `gateway-service`, `user-service`, `notification-service`.
 
 > Для сервисов из IDE используйте `localhost` для подключения к инфраструктуре:
 > - Kafka: `localhost:9092`
@@ -148,40 +148,6 @@ echo "...........................Success..........................."
 
 ---
 
-## 🧠 Особенности архитектуры и интеграции
-
-### Kafka: два слушателя
-
-В `docker-compose.yml` для Kafka настроены два слушателя:
-- `PLAINTEXT://kafka:29092` — для сервисов внутри Docker‑сети.
-- `PLAINTEXT_HOST://localhost:9092` — для клиентов с хоста (IntelliJ, локальные тесты).
-
-**Важно:** не смешивайте адреса. Если сервис в Docker — используйте `kafka:29092`. Если сервис запускается из IDE — `localhost:9092`.
-
-### Eureka и Service Discovery
-
-Все микросервисы регистрируются в Eureka по `spring.application.name`. Шлюз использует `@LoadBalanced RestTemplate` для проксирования запросов по имени сервиса (например, `http://user-service/api/users`).
-
-### Config Server
-
-Config Server читает конфиги из Git (или локальной папки) и раздаёт их клиентским сервисам. Пример URL для получения конфига:
-```bash
-curl http://localhost:8888/user-service/local
-```
-
-Клиентские сервисы подключаются так:
-```properties
-spring.config.import=optional:configserver:http://localhost:8888
-```
-
-Конфиги хранятся в репозитории в виде файлов:
-- `user-service-local.properties`
-- `notification-service-local.properties`
-- `gateway-service-local.properties`
-
-> Секреты (пароли) не храните в Git. Используйте переменные окружения.
-
----
 
 ## 🧪 Тестирование
 
