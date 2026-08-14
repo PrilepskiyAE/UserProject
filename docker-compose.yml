@@ -127,7 +127,6 @@ services:
       SPRING_APPLICATION_NAME: config-server
       SPRING_PROFILES_ACTIVE: docker,native
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: ${ASTON_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS}
     depends_on:
       eureka-server:
         condition: service_healthy
