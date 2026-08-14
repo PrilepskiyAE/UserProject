@@ -74,11 +74,11 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     }
 
     private CircuitBreaker resolveCircuitBreaker(String path) {
-        if (path.equals("/api/users") || path.startsWith("/api/users/")) {
+        if (isUserPath(path)) {
             return userServiceCircuitBreaker;
         }
 
-        if (path.equals("/api/notifications") || path.startsWith("/api/notifications/")) {
+        if (isNotificationPath(path)) {
             return notificationServiceCircuitBreaker;
         }
 
@@ -91,7 +91,7 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     ) throws IOException {
         ResponseEntity<String> fallback;
 
-        if (path.equals("/api/notifications") || path.startsWith("/api/notifications/")) {
+        if (isNotificationPath(path)) {
             fallback = fallbackController.notificationServiceUnavailable();
         } else {
             fallback = fallbackController.userServiceUnavailable();
@@ -116,7 +116,6 @@ public class GatewayCircuitBreakerServletFilter extends OncePerRequestFilter {
     private boolean isUserPath(String path) {
         return path.equals("/api/users") || path.startsWith("/api/users/");
     }
-
     private boolean isNotificationPath(String path) {
         return path.equals("/api/notification") || path.startsWith("/api/notification/");
     }
