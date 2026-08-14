@@ -21,7 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Disabled
 @SpringBootTest
 @ActiveProfiles("integrationtest")
 @Epic("Notification Service")

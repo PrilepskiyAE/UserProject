@@ -77,99 +77,47 @@
 
 1. Создайте файл `.env` в корне проекта:
    ```env
-   ASTON_POSTGRES_USER=aston_user
-   ASTON_POSTGRES_PASSWORD=aston_pass
-   ASTON_POSTGRES_DB=aston_db
-   MAIL_LOGIN=example@gmail.com
-   MAIL_PASSWORD=app-password-here
-   SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-   ```
+   
+ASTON_POSTGRES_DB=platform_db
+ASTON_POSTGRES_USER=admin
+ASTON_POSTGRES_PASSWORD=astonpassword
+ASTON_PGADMIN_DEFAULT_EMAIL=admin@aston.com
+ASTON_PGADMIN_DEFAULT_PASSWORD=password
+ASTON_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=file:///config/
+MAIL_LOGIN=example@gmail.com
+MAIL_PASSWORD=app-password-here
+
 2. Убедитесь, что `init.sql` лежит рядом с `docker-compose.yml` (если нужна инициализация БД).
 3. Добавьте `.env` и `target/` в `.gitignore`.
 
-### Запуск
-
-`eureka-server -> config-server -> gateway-service -> user-service -> notification-service`
-
-```bash
-docker compose down -v
-docker compose up -d postgres zookeeper kafka eureka-server config-server
-```
-
-Проверьте статус:
-```bash
-docker compose ps
-```
-Все сервисы должны быть в статусе `running`.
-
-Дождитесь готовности:
-- PostgreSQL: ~50–60 секунд.
-- Kafka: 2–3 минуты (синхронизация с Zookeeper).
-- Config Server: 10–20 секунд (клонирование Git-репозитория или сканирование папки).
-
----
 
 ## ☕ Как запустить сервисы
 
 ### Вариант 1: Все сервисы в Docker (end‑to‑end)
 
-Добавьте в `docker-compose.yml`:
-
-```yaml
-  user-service:
-    build: ./user-service
-    container_name: aston_user_service
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${ASTON_POSTGRES_DB}
-      - SPRING_DATASOURCE_USERNAME=${ASTON_POSTGRES_USER}
-      - SPRING_DATASOURCE_PASSWORD=${ASTON_POSTGRES_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS:-kafka:29092}
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  notification-service:
-    build: ./notification-service
-    container_name: aston_notification_service
-    environment:
-      - MAIL_LOGIN=${MAIL_LOGIN}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS:-kafka:29092}
-      - APP_KAFKA_TOPIC_USER_EVENTS=${APP_KAFKA_TOPIC_USER_EVENTS:-user-events}
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    depends_on:
-      kafka:
-        condition: service_healthy
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  gateway-service:
-    build: ./gateway-service
-    container_name: aston_gateway_service
-    environment:
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    depends_on:
-      eureka-server:
-        condition: service_healthy
-    networks:
-      - app-network
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-```
 
 Запуск:
-```bash
-docker compose up -d user-service notification-service gateway-service
-```
+В корне проекта лежит скрипт build.sh, который корректно поднимает инфраструктуру с учётом зависимостей и времени на прогрев сервисов.
 
+```
+#!/bin/bash
+
+COMPOSE_FILE="docker-compose.yml"
+
+echo "...........................Build..........................."
+mvn clean package -DskipTests
+docker compose -f "$COMPOSE_FILE" config >/dev/null
+docker compose -f "$COMPOSE_FILE" build
+docker compose -f "$COMPOSE_FILE" down --remove-orphans
+docker compose -f "$COMPOSE_FILE" up -d
+
+echo "...........................Start..........................."
+sleep 10
+
+docker compose -f "$COMPOSE_FILE" ps
+
+echo "...........................Success..........................."
+```
 ---
 
 ### Вариант 2: Локально из IDE (для разработки и отладки)

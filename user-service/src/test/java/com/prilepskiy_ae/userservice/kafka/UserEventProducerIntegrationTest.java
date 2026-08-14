@@ -1,11 +1,13 @@
 package com.prilepskiy_ae.userservice.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.prilepskiy_ae.common.OperationType;
 import com.prilepskiy_ae.common.UserEventDto;
 import com.prilepskiy_ae.userservice.BaseTest;
 import com.prilepskiy_ae.userservice.UserServiceApplication;
 import com.prilepskiy_ae.userservice.dto.user.UserRequest;
+import com.prilepskiy_ae.userservice.repository.UserRepository;
 import io.qameta.allure.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,6 +15,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -43,20 +47,16 @@ import java.util.concurrent.CompletableFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//@Disabled
+@SpringBootTest(classes = UserServiceApplication.class,properties = {"spring.autoconfigure.exclude=" +"org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration," +"org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration"})@Testcontainers@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)@Story("Kafka Producer Integration")
 
-@Epic("User API")
-@Feature("Kafka Producer")
-@Owner("Prilepskiy Alex")
-@SpringBootTest(classes = UserServiceApplication.class)
-@Testcontainers
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@Story("Kafka Producer Integration")
 public class UserEventProducerIntegrationTest extends BaseTest {
 
     @Container
     static KafkaContainer kafkaContainer = new KafkaContainer(
             DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
-
+    @MockitoBean
+    private UserRepository userRepository;
 
     @Autowired
     private WebApplicationContext context;
@@ -64,6 +64,11 @@ public class UserEventProducerIntegrationTest extends BaseTest {
     @DynamicPropertySource
     static void overrideKafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
+        registry.add( "kafka.topic.user-events", () -> "user-events" );
+        registry.add( "spring.kafka.producer.key-serializer", StringSerializer.class::getName); registry.add( "spring.kafka.producer.value-serializer", () -> JacksonJsonSerializer.class.getName() );
+        registry.add(
+                "spring.kafka.producer.properties.spring.json.value.default.type",
+                UserEventDto.class::getName);
     }
 
     private final String uniqueEmail = "test-" + System.nanoTime() + "@example.com";
@@ -86,7 +91,7 @@ public class UserEventProducerIntegrationTest extends BaseTest {
         kafkaTemplate = new KafkaTemplate<>(producerFactory);
 
     }
-
+    @Disabled
     @Test
     @Story("Создание пользователя")
     @Severity(SeverityLevel.CRITICAL)

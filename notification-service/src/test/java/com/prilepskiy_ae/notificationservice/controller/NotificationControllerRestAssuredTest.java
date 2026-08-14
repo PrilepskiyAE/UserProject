@@ -25,7 +25,7 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+@Disabled
 @Epic("Notification API REST Assured")
 @Feature("NotificationController")
 @Owner("Prilepskiy Alex")

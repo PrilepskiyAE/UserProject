@@ -10,13 +10,12 @@ import com.prilepskiy_ae.userservice.repository.UserRepository;
 import com.prilepskiy_ae.userservice.service.user.UserServiceImpl;
 import com.prilepskiy_ae.userservice.service.userEvent.UserEventProducer;
 import io.qameta.allure.*;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +38,18 @@ public class UserServiceImplTest extends BaseTest {
 
     @Mock
     private UserEventProducer producer;
+
+    @BeforeEach
+    void setUpTransactionSynchronization() {
+        TransactionSynchronizationManager.initSynchronization();
+    }
+
+    @AfterEach
+    void tearDownTransactionSynchronization() {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+    }
 
     @Test
     @Story("Create user")
